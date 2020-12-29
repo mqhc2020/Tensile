@@ -1772,6 +1772,14 @@ class KernelWriterSource(KernelWriter):
     kStr = ""
     loopChar = self.indexChars[ \
         kernel["ProblemType"]["IndicesSummation"][self.unrollIdx]]
+    wg0 = "wg%s" % self.tileChar0
+    wg1 = "wg%s" % self.tileChar1
+
+    if kernel["StaggerUMapping"] == 3:
+      if kernel["WorkGroupMapping"] == 0:
+        kStr += "  unsigned int wgSerial = %s + %s * n%s;%s" % (wg0, wg1, wg0, self.endLine)
+      else:
+        kStr += "  wgSerial = %s + %s * n%s;%s" % (wg0, wg1, wg0, self.endLine)
 
     # Number of elements in U accessed by the unroll loop:
     # Does not include elements accessed in tail loop
